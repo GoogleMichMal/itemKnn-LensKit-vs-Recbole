@@ -25,5 +25,7 @@ def itemknn_lenskit():
 
     rla = topn.RecListAnalysis()
     rla.add_metric(topn.ndcg)
+    rla.add_metric(topn.precision)
+    rla.add_metric(topn.recall)
     results = rla.compute(recs, test)
-    print(f"NDCG@10: {results.mean()}")
+    return results.mean()
