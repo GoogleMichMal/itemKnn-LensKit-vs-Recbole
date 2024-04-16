@@ -1,0 +1,10 @@
+epochs: 1
+seed: 42
+eval_args:
+  group_by: user
+  order: RO
+  split: {'RS': [8, 0, 2]}
+  mode: full
+metrics: ['Recall', 'MRR', 'NDCG', 'Precision']
+topk: 10
+metric_decimal_place: 4
