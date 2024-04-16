@@ -13,9 +13,9 @@ def itemknn_lenskit():
     train = ratings.drop(test.index)
     print("Train:", train.shape, "Test:", test.shape)
 
-    item_knn = item_knn.ItemItem(20, feedback="implicit")
+    itemknn = item_knn.ItemItem(20, feedback="implicit")
 
-    fittable = Recommender.adapt(item_knn)
+    fittable = Recommender.adapt(itemknn)
 
     fittable.fit(train)
 
