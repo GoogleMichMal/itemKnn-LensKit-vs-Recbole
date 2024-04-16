@@ -23,6 +23,8 @@ recs = batch.recommend(fittable, users, 10, n_jobs=1)
 
 rla = topn.RecListAnalysis()
 rla.add_metric(topn.ndcg)
+rla.add_metric(topn.precision)
+rla.add_metric(topn.recall)
 results = rla.compute(recs, test)
 print(f"NDCG@10: {results.mean()}")
 
