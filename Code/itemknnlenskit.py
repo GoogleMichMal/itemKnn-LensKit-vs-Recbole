@@ -4,7 +4,7 @@ from lenskit import batch, topn
 from lenskit.algorithms import Recommender, item_knn
 
 
-def itemknnlenskit():
+def itemknn_lenskit():
     ml100k = ML100K("data/ml-100k")
     ratings = ml100k.ratings
     ratings.head()
