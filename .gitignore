@@ -2,3 +2,4 @@ praktikum/
 log/
 log_tensorboard/
 saved/
+/Code/__pycache__
