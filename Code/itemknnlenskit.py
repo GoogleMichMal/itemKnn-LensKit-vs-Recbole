@@ -3,7 +3,7 @@ from lenskit.datasets import ML100K
 from lenskit import batch, topn
 from lenskit.algorithms import Recommender, item_knn
 
-ml100k = ML100K('/data/ml-100k')
+ml100k = ML100K('data/ml-100k')
 ratings = ml100k.ratings
 ratings.head()
 
