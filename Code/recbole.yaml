@@ -1,5 +1,6 @@
 epochs: 1
 seed: 42
+k: 20
 eval_args:
   group_by: user
   order: RO
