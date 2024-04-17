@@ -5,6 +5,6 @@ eval_args:
   order: RO
   split: {'RS': [8, 0, 2]}
   mode: full
-metrics: ['Recall', 'MRR', 'NDCG', 'Precision']
+metrics: ['Recall', 'NDCG', 'Precision']
 topk: 10
 metric_decimal_place: 4
