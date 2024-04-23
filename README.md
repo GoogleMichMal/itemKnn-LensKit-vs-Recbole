@@ -4,3 +4,5 @@ This repository aims to study, highlight and understand the differences in the i
 
 ## Results (so far)
 ### MovieLens 100K Dataset
+
+<img src="https://i.imgur.com/u8hJRPw.png" width="800"/>
