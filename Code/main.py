@@ -1,18 +1,18 @@
 from itemknnlenskit import itemknn_lenskit_ml100k
-from itemknnrecbole import itemknn_recbole_ml100k
+from itemknnrecbole import itemknn_recbole_ml100k, itemknn_recbole_bookcrossing
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 result_lenskit_ml100k = itemknn_lenskit_ml100k()
-result_recbole = itemknn_recbole_ml100k()
+result_recbole_ml100k = itemknn_recbole_ml100k()
 
 ndcg_lenskit_ml100k = result_lenskit_ml100k.ndcg
 precision_lenskit_ml100k = result_lenskit_ml100k.precision
 recall_lenskit_ml100k = result_lenskit_ml100k.recall
 
-ndcg_recbole_ml100k = result_recbole['ndcg@10']
-precision_recbole_ml100k = result_recbole['precision@10']
-recall_recbole_ml100k = result_recbole['recall@10']
+ndcg_recbole_ml100k = result_recbole_ml100k['ndcg@10']
+precision_recbole_ml100k = result_recbole_ml100k['precision@10']
+recall_recbole_ml100k = result_recbole_ml100k['recall@10']
 
 models = ["Lenskit", "RecBole"]
 ndcg_scores_ml100k = [ndcg_lenskit_ml100k, ndcg_recbole_ml100k]
