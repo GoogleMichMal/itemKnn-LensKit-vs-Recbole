@@ -10,3 +10,5 @@ def itemknn_recbole_bookcrossing():
 def itemknn_recbole_amazon():
     result = run_recbole(model='ItemKNN', dataset='Amazon_CDs_and_Vinyl', config_file_list=['Data/Amazon_CDs_and_Vinyl/recbole_amazon_cds_and_vinyl.yaml'])
     return result['test_result']
+
+print(itemknn_recbole_amazon())
