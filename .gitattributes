@@ -1,3 +1,4 @@
 *.inter filter=lfs diff=lfs merge=lfs -text
 *.user filter=lfs diff=lfs merge=lfs -text
 *.item filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
