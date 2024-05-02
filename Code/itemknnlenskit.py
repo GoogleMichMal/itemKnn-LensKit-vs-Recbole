@@ -38,6 +38,7 @@ def itemknn_lenskit_bookcrossing():
     itemknn = item_knn.ItemItem(20, feedback="implicit")
 
     train["user"] = train["user"].astype(str)
+    test["user"] = test["user"].astype(str)
 
     fittable = Recommender.adapt(itemknn)
 
@@ -54,5 +55,3 @@ def itemknn_lenskit_bookcrossing():
     results = rla.compute(recs, test)
     return results.mean()
 
-
-print(itemknn_lenskit_bookcrossing())
