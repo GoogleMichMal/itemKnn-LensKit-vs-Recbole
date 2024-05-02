@@ -11,6 +11,7 @@ def itemknn_lenskit_ml100k():
 
     test = ratings.sample(frac=0.2, random_state=42)
     train = ratings.drop(test.index)
+    print("Train:", train.shape, "Test:", test.shape)
 
     itemknn = item_knn.ItemItem(20, feedback="implicit")
 
@@ -29,19 +30,17 @@ def itemknn_lenskit_ml100k():
     results = rla.compute(recs, test)
     return results.mean()
 
-
 def itemknn_lenskit_bookcrossing():
-    ratings = pd.read_csv("Data/book-crossing/Ratings.csv", sep=";", names=["user", "item", "rating"])
-    ratings.head()
+    bookcrossing = pd.read_csv("Data/book-crossing/Ratings.csv", sep=";", names=["user", "item", "rating"])
 
-    test = ratings.sample(frac=0.2, random_state=42)
-    train = ratings.drop(test.index)
+    test = bookcrossing.sample(frac=0.2, random_state=42)
+    train = bookcrossing.drop(test.index)
+
+    itemknn = item_knn.ItemItem(20, feedback="implicit")
 
     train["user"] = train["user"].astype(str)
     test["user"] = test["user"].astype(str)
 
-    itemknn = item_knn.ItemItem(20, feedback="implicit")
-
     fittable = Recommender.adapt(itemknn)
 
     fittable.fit(train)
@@ -56,5 +55,6 @@ def itemknn_lenskit_bookcrossing():
     rla.add_metric(topn.recall)
     results = rla.compute(recs, test)
     return results.mean()
+
 
 itemknn_lenskit_bookcrossing()
