@@ -18,11 +18,11 @@ To replicate our experiments, follow these steps:
 
 1. **Clone the Repository**: 
 ```
-git clone https://github.com/your_username/ItemKnn-LensKit-vs-Recbole.git
+git clone https://github.com/GoogleMichMal/itemKnn-LensKit-vs-Recbole.git
 ```
 
 2. **Download the Data**:
-Download the [Data.zip](https://drive.google.com/uc?export=download&id=1GHBJ-WCp_Y6gPMPfv8h2ZDEyxEXajybe) file. It contains all four datasets used in our experiments.
+Download the [Data.zip](https://github.com/GoogleMichMal/itemKnn-LensKit-vs-Recbole/releases/latest/download/Data.zip) file. It contains all four datasets used in our experiments.
 
 3. **Unpack Data**:
 Unpack Data.zip in the parent directory of the repository, such that "Code" and "Data" are in the same directory.
