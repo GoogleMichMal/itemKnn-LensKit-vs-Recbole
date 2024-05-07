@@ -7,8 +7,7 @@ This repository aims to study, highlight and understand the differences in the i
 
 <img src="https://i.imgur.com/u8hJRPw.png" width="800"/>
 
-<img src="https://i.imgur.com/vGgQxKd.png" width="800"/>
-
+<img src="https://i.imgur.com/StWf7W5.png" width="800"/>
 
 
 ## Setup
