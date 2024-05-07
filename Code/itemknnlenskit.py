@@ -6,10 +6,12 @@ from tqdm import tqdm
 
 
 def itemknn_lenskit_ml100k():
+    # Read the MovieLens 100K dataset
     ml100k = ML100K("data/ml-100k")
     ratings = ml100k.ratings
     ratings.head()
 
+    # Split the data into training and test sets
     test = ratings.sample(frac=0.2, random_state=42)
     train = ratings.drop(test.index)
 
@@ -23,6 +25,7 @@ def itemknn_lenskit_ml100k():
 
     recs = batch.recommend(fittable, users, 10, n_jobs=1)
 
+    # Initialize the RecListAnalysis object
     rla = topn.RecListAnalysis()
     rla.add_metric(topn.ndcg)
     rla.add_metric(topn.precision)
@@ -31,7 +34,7 @@ def itemknn_lenskit_ml100k():
     return results.mean()
 
 def itemknn_lenskit_bookcrossing():
-    # Lese den gesamten Datensatz ein
+    # Read the Book-Crossing dataset
     bookcrossing = pd.read_csv("Data/book-crossing/Ratings.csv", sep=";", skiprows=1, names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
 
     # Print out the number of unique users and items
@@ -41,34 +44,34 @@ def itemknn_lenskit_bookcrossing():
     print("Number of unique items:", num_unique_items)
 
 
-    # Teile den Datensatz in Trainings- und Testdaten auf
+    # Split the data into training and test sets
     test = bookcrossing.sample(frac=0.2, random_state=42)
     train = bookcrossing.drop(test.index)
 
-    # Erstelle den Item-Item Recommender
+    # Create an ItemItem recommender
     itemknn = item_knn.ItemItem(20, feedback="implicit")
 
-    # Passe den Recommender an
+    # Adapt the recommender to the LensKit API
     fittable = Recommender.adapt(itemknn)
     fittable.fit(train)
 
-    # Liste aller Benutzer
+    # Get the unique users
     users = list(test.user.unique())  
 
     recs = []
     for user in tqdm(users, desc="Generating Recommendations"):
         recs.append(batch.recommend(fittable, [user], 10, n_jobs=1).assign(user=user))
 
-    # Konvertiere die Empfehlungen in einen DataFrame
+    # Combine the recommendations into a single DataFrame
     recs_df = pd.concat(recs, ignore_index=True)  
 
-    # Initialisiere das RecListAnalysis-Objekt
+    # Initialize the RecListAnalysis object
     rla = topn.RecListAnalysis()
     rla.add_metric(topn.ndcg)
     rla.add_metric(topn.precision)
     rla.add_metric(topn.recall)
 
-    # Berechne die Metriken
+    # Compute the evaluation metrics
     results = rla.compute(recs_df, test)
     return results.mean()
     
