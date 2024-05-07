@@ -12,6 +12,7 @@
 *.vsix
 
 # Workspace
+Data
 praktikum
 log*
 saved
