@@ -10,3 +10,15 @@ def itemknn_recbole_bookcrossing():
 def itemknn_recbole_amazon():
     result = run_recbole(model='ItemKNN', dataset='Amazon_CDs_and_Vinyl', config_file_list=['Data/Amazon_CDs_and_Vinyl/recbole_amazon_cds_and_vinyl.yaml'])
     return result['test_result']
+
+def itemknn_recbole_ml1m():
+    result = run_recbole(model='ItemKNN', dataset='ml-1m', config_file_list=['Data/ml-1m/recbole_ml1m.yaml'])
+    return result['test_result']
+
+def itemknn_recbole_food():
+    result = run_recbole(model='ItemKNN', dataset='Food', config_file_list=['Data/Food/recbole_food.yaml'])
+    return result['test_result']
+
+def itemknn_recbole_ml20m():
+    result = run_recbole(model='ItemKNN', dataset='ml-20m', config_file_list=['Data/ml-20m/recbole_ml20m.yaml'])
+    return result['test_result']

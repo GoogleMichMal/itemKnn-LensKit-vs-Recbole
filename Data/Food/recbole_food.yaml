@@ -1,7 +1,6 @@
 data_path: Data/
-dataset: amazon-cds-and-vinyl
+dataset: food
 epochs: 1
-use_gpu: True
 seed: 42
 k: 20
 eval_args:
@@ -12,3 +11,5 @@ eval_args:
 metrics: ['Recall', 'NDCG', 'Precision']
 topk: 10
 metric_decimal_place: 4
+# user_inter_num_interval: (0,6)
+# item_inter_num_interval: (0,6)
