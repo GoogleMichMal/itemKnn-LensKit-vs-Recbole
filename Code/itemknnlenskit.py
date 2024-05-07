@@ -75,3 +75,39 @@ def itemknn_lenskit_bookcrossing():
     results = rla.compute(recs_df, test)
     return results.mean()
     
+
+def itemknn_lenskit_food():
+    food = pd.read_csv("Data/food/RAW_interactions.csv", sep=",", quotechar='"', skiprows=1, usecols=[0,1,3], names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+    
+    num_unique_users = food['user'].nunique()
+    num_unique_items = food['item'].nunique()
+    print("Number of unique users:", num_unique_users)
+    print("Number of unique items:", num_unique_items)
+
+    test = food.sample(frac=0.2, random_state=42)
+    train = food.drop(test.index)
+
+    itemknn = item_knn.ItemItem(20, feedback="implicit")
+
+    fittable = Recommender.adapt(itemknn)
+    fittable.fit(train)
+
+    # Liste aller Benutzer
+    users = list(test.user.unique())  
+
+    recs = []
+    for user in tqdm(users, desc="Generating Recommendations"):
+        recs.append(batch.recommend(fittable, [user], 10, n_jobs=1).assign(user=user))
+
+    # Konvertiere die Empfehlungen in einen DataFrame
+    recs_df = pd.concat(recs, ignore_index=True)  
+
+    # Initialisiere das RecListAnalysis-Objekt
+    rla = topn.RecListAnalysis()
+    rla.add_metric(topn.ndcg)
+    rla.add_metric(topn.precision)
+    rla.add_metric(topn.recall)
+
+    # Berechne die Metriken
+    results = rla.compute(recs_df, test)
+    return results.mean()
