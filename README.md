@@ -14,7 +14,7 @@ This repository aims to study, highlight and understand the differences in the i
 ## Setup
 <ol>
   <li>Clone the repository</li>
-  <li>Download the Data.zip file from [Google Drive](https://drive.google.com/drive/folders/1Qrh3aSnys7WidyH3swMbRETI55eMp1cX). It contains all 4 used datasets</li>
+  <li>Download the Data.zip file from [Google Drive](https://drive.google.com/uc?export=download&id=1GHBJ-WCp_Y6gPMPfv8h2ZDEyxEXajybe). It contains all 4 used datasets</li>
   <li>Unpack Data.zip in the parent directory, such that "Code" and "Data" are in the same directory</li>
-  <li>In the parent directory run <bold>pip install -r requirements.txt<bold></li>
+  <li>In the parent directory run `pip install -r requirements.txt`</li>
 </ol>
