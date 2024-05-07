@@ -13,7 +13,7 @@ This repository aims to study, highlight and understand the differences in the i
 
 ## Setup
 <ol>
-  <li>1. Clone the repository</li>
-  <li>2. Download the Data.zip file from [Google Drive](https://drive.google.com/drive/folders/1Qrh3aSnys7WidyH3swMbRETI55eMp1cX). It contains all 4 used datasets</li>
-  <li>3. Unpack Data.zip in the parent directory, such that "Code" and "Data" are in the same directory</li>
+  <li>Clone the repository</li>
+  <li>Download the Data.zip file from [Google Drive](https://drive.google.com/drive/folders/1Qrh3aSnys7WidyH3swMbRETI55eMp1cX). It contains all 4 used datasets</li>
+  <li>Unpack Data.zip in the parent directory, such that "Code" and "Data" are in the same directory</li>
 </ol>
