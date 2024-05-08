@@ -36,7 +36,7 @@ def download_and_extract(url, target_dir):
 
 
 def main():
-    target_dir = "./"  # Change this to the directory where you want to check for "Data"
+    target_dir = "./" 
     data_folder = os.path.join(target_dir, "Data")
 
     # Check if the "Data" folder exists
