@@ -92,22 +92,22 @@ def itemknn_lenskit_food():
     fittable = Recommender.adapt(itemknn)
     fittable.fit(train)
 
-    # Liste aller Benutzer
+    # List of unique users
     users = list(test.user.unique())  
 
     recs = []
     for user in tqdm(users, desc="Generating Recommendations"):
         recs.append(batch.recommend(fittable, [user], 10, n_jobs=1).assign(user=user))
 
-    # Konvertiere die Empfehlungen in einen DataFrame
+    # Combine the recommendations into a single DataFrame
     recs_df = pd.concat(recs, ignore_index=True)  
 
-    # Initialisiere das RecListAnalysis-Objekt
+    # Initialize the RecListAnalysis object
     rla = topn.RecListAnalysis()
     rla.add_metric(topn.ndcg)
     rla.add_metric(topn.precision)
     rla.add_metric(topn.recall)
 
-    # Berechne die Metriken
+    # Compute the evaluation metrics
     results = rla.compute(recs_df, test)
     return results.mean()
