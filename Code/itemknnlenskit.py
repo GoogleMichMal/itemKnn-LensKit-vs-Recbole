@@ -5,6 +5,38 @@ from lenskit.algorithms import Recommender, item_knn
 from tqdm import tqdm
 
 
+
+def runItemKNN_lenskit(dataset, test_size=0.2, k=20):
+    print("Number of unique users:", dataset['user'].nunique())
+    print("Number of unique items:", dataset['item'].nunique())
+
+    test = dataset.sample(frac=test_size, random_state=42)
+    train = dataset.drop(test.index)
+
+    itemknn = item_knn.ItemItem(k, feedback="implicit")
+
+    fittable = Recommender.adapt(itemknn)
+    fittable.fit(train)
+
+    users = list(test.user.unique())  
+
+    recs = []
+    for user in tqdm(users, desc="Generating Recommendations"):
+        recs.append(batch.recommend(fittable, [user], 10, n_jobs=1).assign(user=user))
+
+    recs_df = pd.concat(recs, ignore_index=True)
+
+    rla = topn.RecListAnalysis()
+    rla.add_metric(topn.ndcg)
+    rla.add_metric(topn.precision)
+    rla.add_metric(topn.recall)
+
+    results = rla.compute(recs_df, test)
+    return results.mean()
+
+
+
+
 def itemknn_lenskit_ml100k():
     # Read the MovieLens 100K dataset
     ml100k = ML100K("data/ml-100k")
@@ -33,6 +65,7 @@ def itemknn_lenskit_ml100k():
     results = rla.compute(recs, test)
     return results.mean()
 
+'''
 def itemknn_lenskit_bookcrossing():
     # Read the Book-Crossing dataset
     bookcrossing = pd.read_csv("Data/book-crossing/Ratings.csv", sep=";", skiprows=1, names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
@@ -74,8 +107,9 @@ def itemknn_lenskit_bookcrossing():
     # Compute the evaluation metrics
     results = rla.compute(recs_df, test)
     return results.mean()
-    
+'''   
 
+'''
 def itemknn_lenskit_food():
     food = pd.read_csv("Data/food/RAW_interactions.csv", sep=",", quotechar='"', skiprows=1, usecols=[0,1,3], names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
     
@@ -111,3 +145,4 @@ def itemknn_lenskit_food():
     # Compute the evaluation metrics
     results = rla.compute(recs_df, test)
     return results.mean()
+'''
