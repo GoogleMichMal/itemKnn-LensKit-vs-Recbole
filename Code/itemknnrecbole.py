@@ -1,67 +1,130 @@
-from recbole.quick_start import run_recbole
-from recbole.config import Config
-from recbole.data.transform import construct_transform
-from recbole.data import create_dataset, data_preparation
-from recbole.model.general_recommender.itemknn import ItemKNN
-from recbole.utils import init_seed, get_model, get_trainer
+import sys
+import torch.distributed as dist
+import numpy as np
 
-def runitemknn_recbole(config):
-    dataset = create_dataset(config['model'])
-    print(dataset)
-    #data splitting
+from recbole.evaluator.base_metric import TopkMetric
+from recbole.model.general_recommender.itemknn import ItemKNN
+from recbole.evaluator import Collector
+from recbole.trainer import TraditionalTrainer
+from recbole.config import Config
+from recbole.data import create_dataset, data_preparation
+from logging import getLogger
+from recbole.utils import (
+    init_logger,
+    init_seed,
+    get_environment,
+)
+
+class ndcgRecbole(TopkMetric):
+    def __init__(self, config):
+        super().__init__(config)
+
+    def calculate_metric(self, dataobject):
+        # pos_index: a bool matrix, shape user * k. The item with the (j+1)-th highest score of i-th user is pos if pos_index[i][j] is True
+        # pos_len: a vector representing the number of positive items for each user
+        pos_index, pos_len = self.used_info(dataobject)
+        result = self.metric_info(pos_index, pos_len)
+        metric_dict = self.topk_result("ndcg", result)
+        return metric_dict
+    
+    # recbole-ndcg implementation
+    def metric_info(self, pos_index, pos_len):
+        # len_rank: [10, 10, 10, 10, ... userNumber]
+        len_rank = np.full_like(pos_len, pos_index.shape[1])
+        idcg_len = np.where(pos_len > len_rank, len_rank, pos_len)
+        
+        # iranks:  [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ...]
+        iranks = np.zeros_like(pos_index, dtype=np.float)
+        # iranks:  [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ...]
+        iranks[:, :] = np.arange(1, pos_index.shape[1] + 1)
+        idcg = np.cumsum(1.0 / np.log2(iranks + 1), axis=1)
+        for row, idx in enumerate(idcg_len):
+            # for user with less than 10 positive items, fill the rest with the last valid value
+            idcg[row, idx:] = idcg[row, idx - 1]
+
+        ranks = np.zeros_like(pos_index, dtype=np.float)
+        ranks[:, :] = np.arange(1, pos_index.shape[1] + 1)
+        dcg = 1.0 / np.log2(ranks + 1)
+        dcg = np.cumsum(np.where(pos_index, dcg, 0), axis=1)
+        result = dcg / idcg
+        return result
+    
+
+# Config object: config = (model, dataset, config_file_list, config_dict)
+def runitemknn_recbole(dataset="ml-100k"):
+    config = Config(model='ItemKNN', dataset='ml-100k', config_file_list=['Data/ml-100k/recbole.yaml'])
+    if(dataset == "ml-100k"):
+        pass
+    elif(dataset == "book-crossing"):
+        config = Config(model='ItemKNN', dataset='book-crossing', config_file_list=['Data/book-crossing/recbole_bookcrossing.yaml'])
+    elif(dataset == "ml-1m"):
+        config = Config(model='ItemKNN', dataset='ml-1m', config_file_list=['Data/ml-1m/recbole_ml1m.yaml'])
+    elif(dataset == "ml-20m"):
+        config = Config(model='ItemKNN', dataset='ml-20m', config_file_list=['Data/ml-20m/recbole_ml20m.yaml'])
+
+
+    # set seed-configuration for math-libraries and random number generators
+    init_seed(config["seed"], config["reproducibility"])
+
+    # logger init
+    init_logger(config)
+    logger = getLogger()
+    logger.info(sys.argv)
+    logger.info(config)
+
+    # create Dataset Object 
+    # (https://github.com/RUCAIBox/RecBole/blob/master/recbole/data/utils.py)
+    dataset = create_dataset(config)
+    logger.info(dataset)
+
+    # train/test Split (returns AbstractDataLoader objects)
     train_data, valid_data, test_data = data_preparation(config, dataset)
 
-    #model loading
-    init_seed(config["seed"] + config["local_rank"], config["reproducibility"])
-    model = get_model(config["model"])(config, train_data._dataset).to(config["device"])
-    transform = construct_transform(config)
+    # get model object
+    model = ItemKNN(config, train_data._dataset).to(config["device"])
 
-    # trainer loading and initialization
-    trainer = get_trainer(config["MODEL_TYPE"], config["model"])(config, model)
+    # logging model info
+    logger.info(model)
 
-    # model training
-    best_valid_score, best_valid_result = trainer.fit(
-        train_data, valid_data, saved=True, show_progress=config["show_progress"]
-    )
+    # get trainer object
+    trainer = TraditionalTrainer(config, model)
 
-    # model evaluation
-    test_result = trainer.evaluate(
-        test_data, load_best_model=True, show_progress=config["show_progress"]
-    )
+    # model training (returns best valid score and best valid result. If valid_data is None, it returns (-1, None)
+    # (https://github.com/RUCAIBox/RecBole/blob/master/recbole/trainer/trainer.py)
+    trainer.fit(train_data, valid_data, saved=True, show_progress=False)
+
+    # evaluation collector
+    # (https://github.com/RUCAIBox/RecBole/blob/master/recbole/evaluator/collector.py)
+    collector = Collector(config)
+    trainer.tot_item_num = dataset.item_num
+
     
-    result = {
-        "best_valid_score": best_valid_score,
-        "valid_score_bigger": config["valid_metric_bigger"],
-        "best_valid_result": best_valid_result,
-        "test_result": test_result,
-    }
+    for _, batched_data in enumerate(test_data):
+        interaction, scores, positive_u, positive_i = trainer._full_sort_batch_eval(batched_data)
+        collector.eval_batch_collect(scores, interaction, positive_u, positive_i) 
+    
+    # get data struct
+    # (https://github.com/RUCAIBox/RecBole/blob/master/recbole/evaluator/collector.py)
+    struct = collector.get_data_struct()
+    
+    # own ndcg
+    ndcg = ndcgRecbole(config)
+    result = ndcg.calculate_metric(struct)
+    print(result)
+
+
+    #log environment information
+    environment_tb = get_environment(config)
+    logger.info(
+        "The running environment of this training is as follows:\n"
+        + environment_tb.draw()
+        )
+
+    if not config["single_spec"]:
+        dist.destroy_process_group()
+
     return result
 
 
-cfg = Config(model='ItemKNN', dataset='ml-100k', config_file_list=['Data/ml-100k/recbole.yaml'])
-print(runitemknn_recbole(cfg))
 
-
-def itemknn_recbole_ml100k():
-    result = run_recbole(model='ItemKNN', dataset='ml-100k', config_file_list=['Data/ml-100k/recbole.yaml'])
-    return result['test_result']
-
-def itemknn_recbole_bookcrossing():
-    result = run_recbole(model='ItemKNN', dataset='book-crossing', config_file_list=['Data/book-crossing/recbole_bookcrossing.yaml'])
-    return result['test_result']
-
-def itemknn_recbole_amazon():
-    result = run_recbole(model='ItemKNN', dataset='Amazon_CDs_and_Vinyl', config_file_list=['Data/Amazon_CDs_and_Vinyl/recbole_amazon_cds_and_vinyl.yaml'])
-    return result['test_result']
-
-def itemknn_recbole_ml1m():
-    result = run_recbole(model='ItemKNN', dataset='ml-1m', config_file_list=['Data/ml-1m/recbole_ml1m.yaml'])
-    return result['test_result']
-
-def itemknn_recbole_food():
-    result = run_recbole(model='ItemKNN', dataset='Food', config_file_list=['Data/Food/recbole_food.yaml'])
-    return result['test_result']
-
-def itemknn_recbole_ml20m():
-    result = run_recbole(model='ItemKNN', dataset='ml-20m', config_file_list=['Data/ml-20m/recbole_ml20m.yaml'])
-    return result['test_result']
+print(runitemknn_recbole("ml-100k"))
