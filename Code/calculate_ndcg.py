@@ -1,11 +1,8 @@
 from calculate_dcg import calculate_dcg
 from _ideal_dcg import _ideal_dcg
-from sync_file import syncfile, refreshvs
 
 # Calculate nDCG for a user
 def calculate_ndcg(top_items, test_items):
-    syncfile()
-    refreshvs()
     dcg = calculate_dcg(top_items, test_items)
     ideal_dcg = _ideal_dcg(len(top_items))
     if ideal_dcg == 0:
