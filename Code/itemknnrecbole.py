@@ -1,6 +1,7 @@
 import sys
 import torch.distributed as dist
 import numpy as np
+import pandas as pd
 
 from recbole.evaluator.base_metric import TopkMetric
 from recbole.model.general_recommender.itemknn import ItemKNN
@@ -80,6 +81,8 @@ def runitemknn_recbole(dataset="ml-100k"):
     # train/test Split (returns AbstractDataLoader objects)
     train_data, valid_data, test_data = data_preparation(config, dataset)
 
+    dataframe = toDataframe(train_data._dataset, test_data._dataset)
+
     # get model object
     model = ItemKNN(config, train_data._dataset).to(config["device"])
 
@@ -126,5 +129,13 @@ def runitemknn_recbole(dataset="ml-100k"):
     return result
 
 
+
+def toDataframe(test, train):
+    testFrame = {'user': test['user_id'], 'item': test['item_id'], 'rating': test['rating']}
+    df1 = pd.DataFrame(data=testFrame)
+
+    trainFrame = {'user': train['user_id'], 'item': train['item_id'], 'rating': train['rating']}
+    df2 = pd.DataFrame(data=trainFrame)
+    return df1, df2
 
 print(runitemknn_recbole("ml-100k"))
