@@ -1,9 +1,11 @@
 import pickle as pkl
+import pandas as pd
 from lenskit.datasets import ML100K
 from lenskit import batch
 from lenskit.algorithms import Recommender, item_knn
 from tqdm import tqdm
 from calculate_ndcg import calculate_ndcg
+from lk_partition_user import lk_partition_users
 
 
 def lenskit_ml100k_ownNDCG():
@@ -14,21 +16,22 @@ def lenskit_ml100k_ownNDCG():
         print("Loaded recommendations from file.")
         users = recs['user'].unique()
 
-        ml100k = ML100K("data/ml-100k")
-        ratings = ml100k.ratings
-        test = ratings.sample(frac=0.2, random_state=42)
+        ml100k = pd.read_csv("Data/ml-100k/u.data", header=None, sep="\t", names=["user", "item", "rating", "timestamp"])
+        # test = ml100k.sample(frac=0.2, random_state=42)
+        train, test = lk_partition_users(ml100k)
 
     except FileNotFoundError:
         print("Training and generating recommendations...")
         # Read the MovieLens 100K dataset
-        ml100k = ML100K("data/ml-100k")
-        ratings = ml100k.ratings
+        ml100k = pd.read_csv("Data/ml-100k/u.data", header=None, sep="\t", names=["user", "item", "rating", "timestamp"])
 
-        # Split the data into training and test sets
-        test = ratings.sample(frac=0.2, random_state=42)
-        train = ratings.drop(test.index)
+        train, test = lk_partition_users(ml100k)
 
-        itemknn = item_knn.ItemItem(20, feedback="implicit")
+        # # Split the data into training and test sets
+        # test = ml100k.sample(frac=0.2, random_state=42)
+        # train = ml100k.drop(test.index)
+
+        itemknn = item_knn.ItemItem(20, 1,feedback="implicit")
 
         fittable = Recommender.adapt(itemknn)
 
@@ -50,10 +53,10 @@ def lenskit_ml100k_ownNDCG():
     for user in tqdm(users, desc='Calculating nDCG', unit='user'):
         # Return the items in the test set for the user
         user_test_items = test[test['user'] == user]['item'].values
-        # print("User test items: ", user_test_items)
+        # print("User test items", user, ":", user_test_items)
         # Return the items recommended to the user
         user_recs = recs[recs['user'] == user]['item'].values
-        # print("User recommendations: ", user_recs)
+        # print("User recommendations", user, ":", user_recs)
         ndcg = calculate_ndcg(user_recs, user_test_items)
         # print("nDCG for user", user, ":", ndcg)
         total_ndcg += ndcg

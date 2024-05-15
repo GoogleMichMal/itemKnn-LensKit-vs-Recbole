@@ -4,6 +4,7 @@ from lenskit import batch
 from lenskit.algorithms import Recommender, item_knn
 from tqdm import tqdm
 from calculate_ndcg import calculate_ndcg
+from lk_partition_user import lk_partition_users
 
 
 def lenskit_bookcrossing_ownNDCG():
@@ -16,6 +17,7 @@ def lenskit_bookcrossing_ownNDCG():
         print("Loaded recommendations from file.")
         # Get the Users who have recommendations
         users = recs_df['user'].unique()
+        print("Users who have recommendations: ", len(users))
 
         # Read the Truth dataset
         bookcrossing = pd.read_csv("Data/book-crossing/ratings.csv", sep=";", skiprows=1, names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
@@ -23,7 +25,7 @@ def lenskit_bookcrossing_ownNDCG():
         num_unique_items = bookcrossing['item'].nunique()
         print("Number of unique users:", num_unique_users)
         print("Number of unique items:", num_unique_items)
-        test = bookcrossing.sample(frac=0.2, random_state=42)
+        train, test = lk_partition_users(bookcrossing)
 
         recs = [recs_df]
 
@@ -36,9 +38,13 @@ def lenskit_bookcrossing_ownNDCG():
         print("Number of unique users:", num_unique_users)
         print("Number of unique items:", num_unique_items)
 
-        # Split the data into training and test sets
-        test = bookcrossing.sample(frac=0.2, random_state=42)
-        train = bookcrossing.drop(test.index)
+        train, test = lk_partition_users(bookcrossing)
+        # print("Train ", train['user'].nunique())
+        # print("Test ", test['user'].nunique())
+
+        # # Split the data into training and test sets
+        # test = bookcrossing.sample(frac=0.2, random_state=42)
+        # train = bookcrossing.drop(test.index)
 
         # Create an ItemItem recommender
         itemknn = item_knn.ItemItem(20, feedback="implicit")
@@ -47,7 +53,7 @@ def lenskit_bookcrossing_ownNDCG():
         fittable.fit(train)
 
         # Get the unique users
-        users = list(test.user.unique())  
+        users = list(test.user.unique())
 
         recs = []
         for user in tqdm(users, desc="Generating Recommendations"):

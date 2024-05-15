@@ -43,8 +43,11 @@ class ndcgRecbole(TopkMetric):
             # for user with less than 10 positive items, fill the rest with the last valid value
             idcg[row, idx:] = idcg[row, idx - 1]
 
+        # ranks:  [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ...]
         ranks = np.zeros_like(pos_index, dtype=np.float)
+        # ranks:  [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ...]
         ranks[:, :] = np.arange(1, pos_index.shape[1] + 1)
+
         dcg = 1.0 / np.log2(ranks + 1)
         dcg = np.cumsum(np.where(pos_index, dcg, 0), axis=1)
         result = dcg / idcg
@@ -62,6 +65,8 @@ def runitemknn_recbole(dataset="ml-100k"):
         config = Config(model='ItemKNN', dataset='ml-1m', config_file_list=['Data/ml-1m/recbole_ml1m.yaml'])
     elif(dataset == "ml-20m"):
         config = Config(model='ItemKNN', dataset='ml-20m', config_file_list=['Data/ml-20m/recbole_ml20m.yaml'])
+    elif(dataset == "anime"):
+        config = Config(model='ItemKNN', dataset='anime', config_file_list=['Data/anime/recbole_anime.yaml'])
 
 
     # set seed-configuration for math-libraries and random number generators
@@ -80,8 +85,11 @@ def runitemknn_recbole(dataset="ml-100k"):
 
     # train/test Split (returns AbstractDataLoader objects)
     train_data, valid_data, test_data = data_preparation(config, dataset)
+    print("Train Data: ", train_data._dataset)
+    print("Test Data: ", test_data._dataset)
 
-    dataframe = toDataframe(train_data._dataset, test_data._dataset)
+    # dataframe1, dataframe2 = toDataframe(train_data._dataset, test_data._dataset)
+    # print("Dataframe1: ", dataframe1)
 
     # get model object
     model = ItemKNN(config, train_data._dataset).to(config["device"])
@@ -138,4 +146,4 @@ def toDataframe(test, train):
     df2 = pd.DataFrame(data=trainFrame)
     return df1, df2
 
-print(runitemknn_recbole("ml-100k"))
+print(runitemknn_recbole("ml-1m"))
