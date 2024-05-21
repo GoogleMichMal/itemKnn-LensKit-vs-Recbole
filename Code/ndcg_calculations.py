@@ -5,7 +5,6 @@ from tqdm import tqdm
 from lk_partition_users import lk_partition_users
 from make_implicit_movielens import make_implicit_movielens
 from make_implicit_anime_bookcrossing import make_implicit_anime_bookcrossing
-from ndcg import ndcg
 from lenskit import batch
 from calculate_ndcg import calculate_ndcg
 from lenskit.algorithms import Recommender, item_knn
