@@ -11,16 +11,31 @@ from lenskit.algorithms import Recommender, item_knn
 
 
 def ndcg_ml100k():
-    ml100k = pd.read_csv("Data/ml-100k/u.data", header=None, sep="\t", names=["user", "item", "rating", "timestamp"])
+    # ml100k = pd.read_csv("Data/ml-100k/u.data", header=None, sep="\t", names=["user", "item", "rating", "timestamp"])
 
-    data = make_implicit_movielens(ml100k)
-    print("Number of interactions in the dataset: ", data.shape[0])
+    # data = make_implicit_movielens(ml100k)
+    # print("Number of interactions in the dataset: ", data.shape[0])
 
-    train, test = lk_partition_users(data)
-    print("Number of unique users in the train set: ", train['user'].nunique())
-    print("Number of unique items in the train set: ", train['item'].nunique())
-    print("Number of unique users in the test set: ", test['user'].nunique())
-    print("Number of unique items in the test set: ", test['item'].nunique())
+    # train, test = lk_partition_users(data)
+
+    train = pd.read_csv("Data/Datasplits/ml-100k/trainset_ml100k.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+    test = pd.read_csv("Data/Datasplits/ml-100k/testset_ml100k.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+
+    print("Train set:")
+    print("Number unique users: ", train['user'].nunique())
+    print("Average actions of users: ", train.shape[0] / train['user'].nunique())
+    print("The number of unique items: ", train['item'].nunique())
+    print("Average actions of items: ", train.shape[0] / train['item'].nunique())
+    print("The number of inters: ", train.shape[0])
+    print("The sparsity of the dataset: ", 1 - train.shape[0] / (train['user'].nunique() * train['item'].nunique()))
+    print("-------------------------------------------")
+    print("Test set:")
+    print("Number unique users: ", test['user'].nunique())
+    print("Average actions of users: ", test.shape[0] / test['user'].nunique())
+    print("The number of unique items: ", test['item'].nunique())
+    print("Average actions of items: ", test.shape[0] / test['item'].nunique())
+    print("The number of inters: ", test.shape[0])
+    print("The sparsity of the dataset: ", 1 - test.shape[0] / (test['user'].nunique() * test['item'].nunique()))
 
     itemknn = item_knn.ItemItem(20,feedback="implicit")
 
@@ -70,18 +85,31 @@ def ndcg_ml100k():
 # print("NDCG for ml-100k: ", ndcg_ml100k())
 
 def ndcg_ml1m():
-    ml1m = pd.read_csv("Data/ml-1m/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating", "timestamp"], dtype={"user": str, "item": str, "rating": float, "timestamp": int})
+    # ml1m = pd.read_csv("Data/ml-1m/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating", "timestamp"], dtype={"user": str, "item": str, "rating": float, "timestamp": int})
 
-    data = make_implicit_movielens(ml1m)
-    print("Number of interactions in the dataset: ", data.shape[0])
+    # data = make_implicit_movielens(ml1m)
+    # print("Number of interactions in the dataset: ", data.shape[0])
 
-    train, test = lk_partition_users(data)
-    print("Number of unique users in the train set: ", train['user'].nunique())
-    print("Number of unique items in the train set: ", train['item'].nunique())
-    print("Number of interactions in the train set: ", train.shape[0])
-    print("Number of unique users in the test set: ", test['user'].nunique())
-    print("Number of unique items in the test set: ", test['item'].nunique())
-    print("Number of interactions in the test set: ", test.shape[0])
+    # train, test = lk_partition_users(data)
+
+    train = pd.read_csv("Data/Datasplits/ml-1m/trainset_ml-1m.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+    test = pd.read_csv("Data/Datasplits/ml-1m/testset_ml-1m.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+
+    print("Train set:")
+    print("Number unique users: ", train['user'].nunique())
+    print("Average actions of users: ", train.shape[0] / train['user'].nunique())
+    print("The number of unique items: ", train['item'].nunique())
+    print("Average actions of items: ", train.shape[0] / train['item'].nunique())
+    print("The number of inters: ", train.shape[0])
+    print("The sparsity of the dataset: ", 1 - train.shape[0] / (train['user'].nunique() * train['item'].nunique()))
+    print("-------------------------------------------")
+    print("Test set:")
+    print("Number unique users: ", test['user'].nunique())
+    print("Average actions of users: ", test.shape[0] / test['user'].nunique())
+    print("The number of unique items: ", test['item'].nunique())
+    print("Average actions of items: ", test.shape[0] / test['item'].nunique())
+    print("The number of inters: ", test.shape[0])
+    print("The sparsity of the dataset: ", 1 - test.shape[0] / (test['user'].nunique() * test['item'].nunique()))
 
     itemknn = item_knn.ItemItem(20,feedback="implicit")
 
@@ -131,16 +159,31 @@ def ndcg_ml1m():
 # print("NDCG for ml-1m: ", ndcg_ml1m())
 
 def ndcg_anime():
-    anime = pd.read_csv("Data/anime/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+    # anime = pd.read_csv("Data/anime/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
 
-    data = make_implicit_anime_bookcrossing(anime)
-    print("Number of interactions in the dataset: ", data.shape[0])
+    # data = make_implicit_anime_bookcrossing(anime)
+    # print("Number of interactions in the dataset: ", data.shape[0])
 
-    train, test = lk_partition_users(data)
-    print("Number of unique users in the train set: ", train['user'].nunique())
-    print("Number of unique items in the train set: ", train['item'].nunique())
-    print("Number of unique users in the test set: ", test['user'].nunique())
-    print("Number of unique items in the test set: ", test['item'].nunique())
+    # train, test = lk_partition_users(data)
+
+    train = pd.read_csv("Data/Datasplits/anime/trainset_anime.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+    test = pd.read_csv("Data/Datasplits/anime/testset_anime.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+
+    print("Train set:")
+    print("Number unique users: ", train['user'].nunique())
+    print("Average actions of users: ", train.shape[0] / train['user'].nunique())
+    print("The number of unique items: ", train['item'].nunique())
+    print("Average actions of items: ", train.shape[0] / train['item'].nunique())
+    print("The number of inters: ", train.shape[0])
+    print("The sparsity of the dataset: ", 1 - train.shape[0] / (train['user'].nunique() * train['item'].nunique()))
+    print("-------------------------------------------")
+    print("Test set:")
+    print("Number unique users: ", test['user'].nunique())
+    print("Average actions of users: ", test.shape[0] / test['user'].nunique())
+    print("The number of unique items: ", test['item'].nunique())
+    print("Average actions of items: ", test.shape[0] / test['item'].nunique())
+    print("The number of inters: ", test.shape[0])
+    print("The sparsity of the dataset: ", 1 - test.shape[0] / (test['user'].nunique() * test['item'].nunique()))
 
     itemknn = item_knn.ItemItem(20,feedback="implicit")
 
@@ -190,16 +233,31 @@ def ndcg_anime():
 # print("NDCG for anime:", ndcg_anime())
 
 def ndcg_bookcrossing():
-    bookcrossing = pd.read_csv("Data/book-crossing/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+    # bookcrossing = pd.read_csv("Data/book-crossing/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
 
-    data = make_implicit_anime_bookcrossing(bookcrossing)
-    print("Number of interactions in the dataset: ", data.shape[0])
+    # data = make_implicit_anime_bookcrossing(bookcrossing)
+    # print("Number of interactions in the dataset: ", data.shape[0])
 
-    train, test = lk_partition_users(data)
-    print("Number of unique users in the train set: ", train['user'].nunique())
-    print("Number of unique items in the train set: ", train['item'].nunique())
-    print("Number of unique users in the test set: ", test['user'].nunique())
-    print("Number of unique items in the test set: ", test['item'].nunique())
+    # train, test = lk_partition_users(data)
+
+    train = pd.read_csv("Data/Datasplits/book-crossing/trainset_bookcrossing.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+    test = pd.read_csv("Data/Datasplits/book-crossing/testset_bookcrossing.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+
+    print("Train set:")
+    print("Number unique users: ", train['user'].nunique())
+    print("Average actions of users: ", train.shape[0] / train['user'].nunique())
+    print("The number of unique items: ", train['item'].nunique())
+    print("Average actions of items: ", train.shape[0] / train['item'].nunique())
+    print("The number of inters: ", train.shape[0])
+    print("The sparsity of the dataset: ", 1 - train.shape[0] / (train['user'].nunique() * train['item'].nunique()))
+    print("-------------------------------------------")
+    print("Test set:")
+    print("Number unique users: ", test['user'].nunique())
+    print("Average actions of users: ", test.shape[0] / test['user'].nunique())
+    print("The number of unique items: ", test['item'].nunique())
+    print("Average actions of items: ", test.shape[0] / test['item'].nunique())
+    print("The number of inters: ", test.shape[0])
+    print("The sparsity of the dataset: ", 1 - test.shape[0] / (test['user'].nunique() * test['item'].nunique()))
 
     itemknn = item_knn.ItemItem(20,feedback="implicit")
 
