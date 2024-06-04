@@ -14,7 +14,10 @@ def ndcg_ml100k():
     # ml100k = pd.read_csv("Data/ml-100k/u.data", header=None, sep="\t", names=["user", "item", "rating", "timestamp"])
 
     # data = make_implicit_movielens(ml100k)
+    
     # print("Number of interactions in the dataset: ", data.shape[0])
+    # print("Number of unique users: ", data['user'].nunique())
+    # print("Number of unique items: ", data['item'].nunique())
 
     # train, test = lk_partition_users(data)
 
@@ -46,7 +49,6 @@ def ndcg_ml100k():
     users = test.user.unique()
 
     start_time = time.time()
-        
     formatted_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
     print("Start time:", formatted_start_time)
 
@@ -61,8 +63,8 @@ def ndcg_ml100k():
         pkl.dump(ii_pred, open(f"saved_recommendations_ml100k_implicit.pkl", "wb"))
 
     end_time = time.time()
-    formatted_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
-    print("Start time:", formatted_start_time)
+    formatted_end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
+    print("End time:", formatted_end_time)
 
     if users is None or test is None:
         return 0
@@ -88,6 +90,7 @@ def ndcg_ml1m():
     # ml1m = pd.read_csv("Data/ml-1m/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating", "timestamp"], dtype={"user": str, "item": str, "rating": float, "timestamp": int})
 
     # data = make_implicit_movielens(ml1m)
+
     # print("Number of interactions in the dataset: ", data.shape[0])
 
     # train, test = lk_partition_users(data)
@@ -120,7 +123,6 @@ def ndcg_ml1m():
     users = test.user.unique()
 
     start_time = time.time()
-        
     formatted_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
     print("Start time:", formatted_start_time)
 
@@ -135,8 +137,8 @@ def ndcg_ml1m():
         pkl.dump(ii_pred, open(f"saved_recommendations_ml1m_implicit.pkl", "wb"))
 
     end_time = time.time()
-    formatted_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
-    print("Start time:", formatted_start_time)
+    formatted_end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
+    print("End time:", formatted_end_time)
 
     if users is None or test is None:
         return 0
@@ -149,6 +151,10 @@ def ndcg_ml1m():
         # Return the items recommended to the user
         user_recs = ii_pred[ii_pred['user'] == user]['item'].values
         # print("User recommendations", user, ":", user_recs)
+
+        if len(user_recs) != 10:
+            print("User with insufficient recommendations:", user)
+
         ndcg = calculate_ndcg(user_recs, user_test_items)
         # print("nDCG for user", user, ":", ndcg)
         total_ndcg += ndcg
@@ -162,6 +168,7 @@ def ndcg_anime():
     # anime = pd.read_csv("Data/anime/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
 
     # data = make_implicit_anime_bookcrossing(anime)
+    
     # print("Number of interactions in the dataset: ", data.shape[0])
 
     # train, test = lk_partition_users(data)
@@ -194,7 +201,6 @@ def ndcg_anime():
     users = test.user.unique()
 
     start_time = time.time()
-        
     formatted_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
     print("Start time:", formatted_start_time)
 
@@ -209,12 +215,13 @@ def ndcg_anime():
         pkl.dump(ii_pred, open(f"saved_recommendations_anime_implicit.pkl", "wb"))
 
     end_time = time.time()
-    formatted_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
-    print("Start time:", formatted_start_time)
+    formatted_end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
+    print("End time:", formatted_end_time)
 
     if users is None or test is None:
         return 0
 
+    count = 0
     total_ndcg = 0
     for user in tqdm(users, desc='Calculating nDCG', unit='user'):
         # Return the items in the test set for the user
@@ -223,10 +230,17 @@ def ndcg_anime():
         # Return the items recommended to the user
         user_recs = ii_pred[ii_pred['user'] == user]['item'].values
         # print("User recommendations", user, ":", user_recs)
+
+        if len(user_recs) != 10:
+            # print("User with insufficient recommendations:", user)
+            # print("User recommendations:", user_recs)
+            count += 1
+
         ndcg = calculate_ndcg(user_recs, user_test_items)
         # print("nDCG for user", user, ":", ndcg)
         total_ndcg += ndcg
 
+    print("Total number of users with insufficient recommendations:", count)
     average_ndcg = total_ndcg / len(users)
     return average_ndcg
 
@@ -236,6 +250,7 @@ def ndcg_bookcrossing():
     # bookcrossing = pd.read_csv("Data/book-crossing/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
 
     # data = make_implicit_anime_bookcrossing(bookcrossing)
+    
     # print("Number of interactions in the dataset: ", data.shape[0])
 
     # train, test = lk_partition_users(data)
@@ -268,7 +283,6 @@ def ndcg_bookcrossing():
     users = test.user.unique()
 
     start_time = time.time()
-        
     formatted_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
     print("Start time:", formatted_start_time)
 
@@ -283,8 +297,91 @@ def ndcg_bookcrossing():
         pkl.dump(ii_pred, open(f"saved_recommendations_bookcrossing_implicit.pkl", "wb"))
 
     end_time = time.time()
-    formatted_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
+    formatted_end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
+    print("End time:", formatted_end_time)
+
+    if users is None or test is None:
+        return 0
+
+    count = 0
+    total_ndcg = 0
+    for user in tqdm(users, desc='Calculating nDCG', unit='user'):
+        # Return the items in the test set for the user
+        user_test_items = test[test['user'] == user]['item'].values
+        # print("User test items", user, ":", user_test_items)
+        # Return the items recommended to the user
+        user_recs = ii_pred[ii_pred['user'] == user]['item'].values
+        # print("User recommendations", user, ":", user_recs)
+
+        if len(user_recs) != 10:
+            # print("User with insufficient recommendations:", user)
+            # print("User recommendations:", user_recs)
+            count += 1
+
+        ndcg = calculate_ndcg(user_recs, user_test_items)
+        # print("nDCG for user", user, ":", ndcg)
+        total_ndcg += ndcg
+
+    print("Total number of users with insufficient recommendations:", count)
+    average_ndcg = total_ndcg / len(users)
+    return average_ndcg
+
+# print("NDCG for bookcrossing:", ndcg_bookcrossing())
+
+
+def ndcg_modcloth():
+    # douban = pd.read_csv("Data/douban/ratings.csv", sep=",", skiprows=1, names=["user", "item", "rating", "timestamp"], dtype={"user": str, "item": str, "rating": float, "timestamp": int})
+
+    # data = make_implicit_movielens(douban)
+
+    # print("Number of interactions in the dataset: ", data.shape[0])
+
+    # train, test = lk_partition_users(data)
+
+    train = pd.read_csv("Data/Datasplits/modcloth/trainset_modcloth.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+    test = pd.read_csv("Data/Datasplits/modcloth/testset_modcloth.csv", skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
+
+    print("Train set:")
+    print("Number unique users: ", train['user'].nunique())
+    print("Average actions of users: ", train.shape[0] / train['user'].nunique())
+    print("The number of unique items: ", train['item'].nunique())
+    print("Average actions of items: ", train.shape[0] / train['item'].nunique())
+    print("The number of inters: ", train.shape[0])
+    print("The sparsity of the dataset: ", 1 - train.shape[0] / (train['user'].nunique() * train['item'].nunique()))
+    print("-------------------------------------------")
+    print("Test set:")
+    print("Number unique users: ", test['user'].nunique())
+    print("Average actions of users: ", test.shape[0] / test['user'].nunique())
+    print("The number of unique items: ", test['item'].nunique())
+    print("Average actions of items: ", test.shape[0] / test['item'].nunique())
+    print("The number of inters: ", test.shape[0])
+    print("The sparsity of the dataset: ", 1 - test.shape[0] / (test['user'].nunique() * test['item'].nunique()))
+
+    itemknn = item_knn.ItemItem(20,feedback="implicit")
+
+    fittable = Recommender.adapt(itemknn)
+
+    fittable.fit(train)
+
+    users = test.user.unique()
+
+    start_time = time.time()
+    formatted_start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
     print("Start time:", formatted_start_time)
+
+
+    try:
+        ii_pred = pkl.load(open("saved_recommendations_modcloth_implicit.pkl", "rb"))
+        print("Loaded recommendations from file.")
+
+    except FileNotFoundError:
+        print("Training and generating recommendations...")
+        ii_pred = batch.recommend(fittable, users, 10, n_jobs=1)
+        pkl.dump(ii_pred, open(f"saved_recommendations_modcloth_implicit.pkl", "wb"))
+
+    end_time = time.time()
+    formatted_end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
+    print("End time:", formatted_end_time)
 
     if users is None or test is None:
         return 0
@@ -297,6 +394,10 @@ def ndcg_bookcrossing():
         # Return the items recommended to the user
         user_recs = ii_pred[ii_pred['user'] == user]['item'].values
         # print("User recommendations", user, ":", user_recs)
+
+        if len(user_recs) != 10:
+            print("User with insufficient recommendations:", user)
+
         ndcg = calculate_ndcg(user_recs, user_test_items)
         # print("nDCG for user", user, ":", ndcg)
         total_ndcg += ndcg
@@ -304,4 +405,4 @@ def ndcg_bookcrossing():
     average_ndcg = total_ndcg / len(users)
     return average_ndcg
 
-# print("NDCG for bookcrossing:", ndcg_bookcrossing())
+print("NDCG for modcloth: ", ndcg_modcloth())
