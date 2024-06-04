@@ -8,10 +8,6 @@ This repository aims to study, highlight, and understand the differences in the 
 
 ![MovieLens 100K Precision-Recall Curve](https://i.imgur.com/u8hJRPw.png)
 
-### Book-Crossing Dataset
-
-![Book-Crossing Precision-Recall Curve](https://i.imgur.com/StWf7W5.png)
-
 ## Setup
 
 To replicate our experiments, follow these steps:
