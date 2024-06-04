@@ -60,10 +60,10 @@ def ndcg_evaluation(train_path, test_path, recommendation_path, dataset_name):
 
 if __name__ == "__main__":
     datasets = {
-        "ml100k": ("Data/Datasplits/ml-100k/trainset_ml100k.csv", "Data/Datasplits/ml-100k/testset_ml100k.csv", "recommendations_ml100k_sameDatasets_sameNDCG.pkl"),
-        "ml1m": ("Data/Datasplits/ml-1m/trainset_ml-1m.csv", "Data/Datasplits/ml-1m/testset_ml-1m.csv", "recommendations_ml1m_sameDatasets_sameNDCG.pkl"),
-        "anime": ("Data/Datasplits/anime/trainset_anime.csv", "Data/Datasplits/anime/testset_anime.csv", "recommendations_anime_sameDatasets_sameNDCG.pkl"),
-        "modcloth": ("Data/Datasplits/modcloth/trainset_modcloth.csv", "Data/Datasplits/modcloth/testset_modcloth.csv", "recommendations_modcloth_sameDatasets_sameNDCG.pkl")
+        "ml100k": ("Data/Datasplits/ml-100k/trainset_ml100k.csv", "Data/Datasplits/ml-100k/testset_ml100k.csv", "Recommendations_SameData_SameNDCG/recommendations_ml100k_sameDatasets_sameNDCG.pkl"),
+        "ml1m": ("Data/Datasplits/ml-1m/trainset_ml-1m.csv", "Data/Datasplits/ml-1m/testset_ml-1m.csv", "Recommendations_SameData_SameNDCG/recommendations_ml1m_sameDatasets_sameNDCG.pkl"),
+        "anime": ("Data/Datasplits/anime/trainset_anime.csv", "Data/Datasplits/anime/testset_anime.csv", "Recommendations_SameData_SameNDCG/recommendations_anime_sameDatasets_sameNDCG.pkl"),
+        "modcloth": ("Data/Datasplits/modcloth/trainset_modcloth.csv", "Data/Datasplits/modcloth/testset_modcloth.csv", "Recommendations_SameData_SameNDCG/recommendations_modcloth_sameDatasets_sameNDCG.pkl")
     }
 
     for name, paths in datasets.items():

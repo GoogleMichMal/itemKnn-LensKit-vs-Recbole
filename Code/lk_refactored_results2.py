@@ -60,12 +60,12 @@ def ndcg_evaluation(train_path, test_path, recommendation_path, dataset_name):
 
 if __name__ == "__main__":
     datasets = {
-        "ml100k": ("Data/Datasplits/ml-100k/trainset_ml100k.csv", "Data/Datasplits/ml-100k/testset_ml100k.csv", "saved_recommendations_ml100k_implicit.pkl"),
-        "ml1m": ("Data/Datasplits/ml-1m/trainset_ml-1m.csv", "Data/Datasplits/ml-1m/testset_ml-1m.csv", "saved_recommendations_ml1m_implicit.pkl"),
-        "anime": ("Data/Datasplits/anime/trainset_anime.csv", "Data/Datasplits/anime/testset_anime.csv", "saved_recommendations_anime_implicit.pkl"),
+        "ml100k": ("Data/Datasplits/ml-100k/trainset_ml100k.csv", "Data/Datasplits/ml-100k/testset_ml100k.csv", "Recommendations_customized_ItemKNN/saved_recommendations_ml100k_implicit.pkl"),
+        "ml1m": ("Data/Datasplits/ml-1m/trainset_ml-1m.csv", "Data/Datasplits/ml-1m/testset_ml-1m.csv", "Recommendations_customized_ItemKNN/saved_recommendations_ml1m_implicit.pkl"),
+        "anime": ("Data/Datasplits/anime/trainset_anime.csv", "Data/Datasplits/anime/testset_anime.csv", "Recommendations_customized_ItemKNN/saved_recommendations_anime_implicit.pkl"),
         # Bookcrossing dataset cant be used
         # "bookcrossing": ("Data/Datasplits/book-crossing/trainset_bookcrossing.csv", "Data/Datasplits/book-crossing/testset_bookcrossing.csv", "saved_recommendations_bookcrossing_implicit.pkl"),
-        "modcloth": ("Data/Datasplits/modcloth/trainset_modcloth.csv", "Data/Datasplits/modcloth/testset_modcloth.csv", "saved_recommendations_modcloth_implicit.pkl")
+        "modcloth": ("Data/Datasplits/modcloth/trainset_modcloth.csv", "Data/Datasplits/modcloth/testset_modcloth.csv", "Recommendations_customized_ItemKNN/saved_recommendations_modcloth_implicit.pkl")
     }
 
     for name, paths in datasets.items():
