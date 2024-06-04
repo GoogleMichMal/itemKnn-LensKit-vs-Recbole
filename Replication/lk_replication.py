@@ -2,8 +2,7 @@ import pandas as pd
 from lenskit import batch, topn
 from lenskit.algorithms import Recommender, item_knn
 from lenskit.metrics.topn import ndcg, precision, recall
-from Code.lk_partition_users import lk_partition_users
-from Code.make_implicit_movielens import make_implicit_movielens
+from lk_partition_users import lk_partition_users
 
 def itemknn_lenskit():
     ml100k = pd.read_csv("Data/ml-100k/u.data", header=None, sep="\t", names=["user", "item", "rating", "timestamp"])
