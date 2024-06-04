@@ -3,7 +3,7 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from lenskit import batch
-from calculate_ndcg import calculate_ndcg
+from nDCG_lenskit import nDCG
 from lenskit.algorithms import Recommender, item_knn
 
 def load_dataset(train_path, test_path):
@@ -22,7 +22,7 @@ def print_dataset_stats(train, test):
         print("The sparsity of the dataset: ", 1 - data.shape[0] / (data['user'].nunique() * data['item'].nunique()))
         print("-------------------------------------------")
 
-def ndcg_evaluation(train_path, test_path, recommendation_path, dataset_name):
+def itemknn_evaluation(train_path, test_path, recommendation_path, dataset_name):
     train, test = load_dataset(train_path, test_path)
     print_dataset_stats(train, test)
 
@@ -52,7 +52,8 @@ def ndcg_evaluation(train_path, test_path, recommendation_path, dataset_name):
     for user in tqdm(users, desc='Calculating nDCG', unit='user'):
         user_test_items = test[test['user'] == user]['item'].values
         user_recs = ii_pred[ii_pred['user'] == user]['item'].values
-        ndcg = calculate_ndcg(user_recs, user_test_items)
+        #ndcg = calculate_ndcg(user_recs, user_test_items)
+        ndcg = nDCG(10, user_recs, user_test_items).calculate()
         total_ndcg += ndcg
 
     average_ndcg = total_ndcg / len(users)
@@ -68,5 +69,5 @@ if __name__ == "__main__":
 
     for name, paths in datasets.items():
         train_path, test_path, recommendation_path = paths
-        ndcg = ndcg_evaluation(train_path, test_path, recommendation_path, name)
+        ndcg = itemknn_evaluation(train_path, test_path, recommendation_path, name)
         print(f"NDCG for {name}: {ndcg}")

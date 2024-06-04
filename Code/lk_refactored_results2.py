@@ -3,7 +3,7 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from lenskit import batch
-from calculate_ndcg import calculate_ndcg
+from nDCG_lenskit import nDCG
 from lenskit.algorithms import Recommender, item_knn
 
 def load_dataset(train_path, test_path):
@@ -52,7 +52,7 @@ def ndcg_evaluation(train_path, test_path, recommendation_path, dataset_name):
     for user in tqdm(users, desc='Calculating nDCG', unit='user'):
         user_test_items = test[test['user'] == user]['item'].values
         user_recs = ii_pred[ii_pred['user'] == user]['item'].values
-        ndcg = calculate_ndcg(user_recs, user_test_items)
+        ndcg = nDCG(10, user_recs, user_test_items).calculate()
         total_ndcg += ndcg
 
     average_ndcg = total_ndcg / len(users)

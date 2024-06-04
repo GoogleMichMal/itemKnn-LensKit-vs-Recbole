@@ -63,8 +63,6 @@ def runitemknn_recbole(dataset="ml-100k"):
         config = Config(model='ItemKNN', dataset='book-crossing', config_file_list=['Data/book-crossing/recbole_bookcrossing.yaml'])
     elif(dataset == "ml-1m"):
         config = Config(model='ItemKNN', dataset='ml-1m', config_file_list=['Data/ml-1m/recbole_ml1m.yaml'])
-    elif(dataset == "ml-20m"):
-        config = Config(model='ItemKNN', dataset='ml-20m', config_file_list=['Data/ml-20m/recbole_ml20m.yaml'])
     elif(dataset == "anime"):
         config = Config(model='ItemKNN', dataset='anime', config_file_list=['Data/anime/recbole_anime.yaml'])
     elif(dataset == "modcloth"):
@@ -87,18 +85,6 @@ def runitemknn_recbole(dataset="ml-100k"):
 
     # train/test Split (returns AbstractDataLoader objects)
     train_data, valid_data, test_data = data_preparation(config, dataset)
-
-
-    print("Train Data: ", train_data._dataset)
-    print("Test Data: ", test_data._dataset)
-
-    # dataframe1, dataframe2 = toDataframe(train_data._dataset, test_data._dataset)
-
-    # dataframe1.to_csv('trainset_epinions.csv', index=False)
-    # dataframe2.to_csv('testset_epinions.csv', index=False)
-
-    # print("Dataframe1: ", dataframe1)
-    # print("Dataframe2: ", dataframe2)
 
     # get model object
     model = ItemKNN(config, train_data._dataset).to(config["device"])
