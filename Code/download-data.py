@@ -5,6 +5,12 @@ from tqdm import tqdm
 
 
 def download_and_extract(url, target_dir):
+    """Download the needed datasets as a ZIP file (from url) and extract it to the target directory.
+
+    Args:
+        url (str): The URL of the ZIP file to download.
+        target_dir (str): The directory to extract the contents of the ZIP file.
+    """
     # Download the ZIP file
     response = requests.get(url, stream=True)
     if response.status_code != 200:

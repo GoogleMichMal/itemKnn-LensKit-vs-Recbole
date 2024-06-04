@@ -3,8 +3,22 @@ import time
 import pandas as pd
 from tqdm import tqdm
 from lenskit import batch
-from nDCG_lenskit import nDCG
+from nDCG import nDCG_LK
 from lenskit.algorithms import Recommender, item_knn
+
+
+"""
+itemknn_lenskit_results2
+########################
+
+
+This script is used to calculate the nDCG for the ItemKNN algorithm on the datasets: ml100k, ml1m, anime, modcloth.
+The datasets that are used have been splitted by RecBole in order to make sure, that both frameworks use exactly the same (splitted) 
+data. 
+The LensKit implemention of the similarity matrix has now been modified. For each item, the similarity matrix now stores only the topN items. 
+A deep explanation on the differences between the two implementations can be found in our paper.
+"""
+
 
 def load_dataset(train_path, test_path):
     train = pd.read_csv(train_path, skiprows=1, sep=",", names=["user", "item", "rating"], dtype={"user": str, "item": str, "rating": float})
@@ -52,7 +66,7 @@ def ndcg_evaluation(train_path, test_path, recommendation_path, dataset_name):
     for user in tqdm(users, desc='Calculating nDCG', unit='user'):
         user_test_items = test[test['user'] == user]['item'].values
         user_recs = ii_pred[ii_pred['user'] == user]['item'].values
-        ndcg = nDCG(10, user_recs, user_test_items).calculate()
+        ndcg = nDCG_LK(10, user_recs, user_test_items).calculate()
         total_ndcg += ndcg
 
     average_ndcg = total_ndcg / len(users)

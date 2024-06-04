@@ -1,61 +1,42 @@
 import sys
 import torch.distributed as dist
-import numpy as np
 import pandas as pd
 
-from recbole.evaluator.base_metric import TopkMetric
 from recbole.model.general_recommender.itemknn import ItemKNN
 from recbole.evaluator import Collector
 from recbole.trainer import TraditionalTrainer
 from recbole.config import Config
 from recbole.data import create_dataset, data_preparation
 from logging import getLogger
+from nDCG import nDCG_RB
 from recbole.utils import (
     init_logger,
     init_seed,
     get_environment,
 )
 
-class ndcgRecbole(TopkMetric):
-    def __init__(self, config):
-        super().__init__(config)
 
-    def calculate_metric(self, dataobject):
-        # pos_index: a bool matrix, shape user * k. The item with the (j+1)-th highest score of i-th user is pos if pos_index[i][j] is True
-        # pos_len: a vector representing the number of positive items for each user
-        pos_index, pos_len = self.used_info(dataobject)
-        result = self.metric_info(pos_index, pos_len)
-        metric_dict = self.topk_result("ndcg", result)
-        return metric_dict
-    
-    # recbole-ndcg implementation
-    def metric_info(self, pos_index, pos_len):
-        # len_rank: [10, 10, 10, 10, ... userNumber]
-        len_rank = np.full_like(pos_len, pos_index.shape[1])
-        idcg_len = np.where(pos_len > len_rank, len_rank, pos_len)
-        
-        # iranks:  [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ...]
-        iranks = np.zeros_like(pos_index, dtype=np.float)
-        # iranks:  [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ...]
-        iranks[:, :] = np.arange(1, pos_index.shape[1] + 1)
-        idcg = np.cumsum(1.0 / np.log2(iranks + 1), axis=1)
-        for row, idx in enumerate(idcg_len):
-            # for user with less than 10 positive items, fill the rest with the last valid value
-            idcg[row, idx:] = idcg[row, idx - 1]
+"""
+itemknn_recbole
+########################
 
-        # ranks:  [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], ...]
-        ranks = np.zeros_like(pos_index, dtype=np.float)
-        # ranks:  [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ...]
-        ranks[:, :] = np.arange(1, pos_index.shape[1] + 1)
 
-        dcg = 1.0 / np.log2(ranks + 1)
-        dcg = np.cumsum(np.where(pos_index, dcg, 0), axis=1)
-        result = dcg / idcg
-        return result
+This script is used to calculate the nDCG for the ItemKNN algorithm on the datasets: ml100k, ml1m, anime, modcloth.
+The datasets that are used have been splitted by RecBole in order to make sure, that both frameworks use exactly the same (splitted) 
+data.
+"""
+
+
+
     
 
-# Config object: config = (model, dataset, config_file_list, config_dict)
 def runitemknn_recbole(dataset="ml-100k"):
+    """Run the ItemKNN algorithm on the RecBole framework and calculate the nDCG.
+
+    Args:
+        dataset (str, optional): The dataset that should be used. Defaults to "ml-100k".
+    """
+
     config = Config(model='ItemKNN', dataset='ml-100k', config_file_list=['Data/ml-100k/recbole.yaml'])
     if(dataset == "ml-100k"):
         pass
@@ -114,10 +95,7 @@ def runitemknn_recbole(dataset="ml-100k"):
     struct = collector.get_data_struct()
     
     # own ndcg
-    ndcg = ndcgRecbole(config)
-    result = ndcg.calculate_metric(struct)
-    print(result)
-
+    ndcg = nDCG_RB(config).calculate(struct)
 
     #log environment information
     environment_tb = get_environment(config)
@@ -129,11 +107,21 @@ def runitemknn_recbole(dataset="ml-100k"):
     if not config["single_spec"]:
         dist.destroy_process_group()
 
-    return result
+    return ndcg
 
 
 
 def toDataframe(test, train):
+    """Convert a RecBole 'Dataset' object to a pandas DataFrame (used in order to make sure that LensKit and RecBole use the same data)
+
+    Args:
+        test (Dataset): RecBole test dataset
+        train (Dataset): RecBole train dataset
+
+    Returns:
+        df1 (DataFrame): test dataset as pandas DataFrame
+        df2 (DataFrame): train dataset as pandas DataFrame
+    """
     testFrame = {'user': test['user_id'], 'item': test['item_id'], 'rating': test['label']}
     df1 = pd.DataFrame(data=testFrame)
 
