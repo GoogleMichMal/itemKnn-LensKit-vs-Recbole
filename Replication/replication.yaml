@@ -1,3 +1,4 @@
+data_path: Data/
 epochs: 1
 seed: 42
 k: 20
