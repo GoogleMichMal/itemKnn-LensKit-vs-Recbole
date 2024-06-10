@@ -16,5 +16,5 @@ Data
 praktikum
 log*
 saved
-/Code/__pycache__
-/Replication/__pycache__
+*/__pycache__
+*.pyc
