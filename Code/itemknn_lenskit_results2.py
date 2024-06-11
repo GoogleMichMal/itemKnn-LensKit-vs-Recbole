@@ -74,8 +74,6 @@ def ndcg_evaluation(train_path, test_path, recommendation_path, dataset_name):
 
 if __name__ == "__main__":
     datasets = {
-
-
         ### Same Data, Same NDCG, Same Similarity Matrix Implementation
         "ml100k_84": ("Data/Datasplits/ml-100k/trainset_ml100k_84.csv", "Data/Datasplits/ml-100k/testset_ml100k_84.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_ml100k_84_implicit.pkl"),
         "ml100k_42": ("Data/Datasplits/ml-100k/trainset_ml100k_42.csv", "Data/Datasplits/ml-100k/testset_ml100k_42.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_ml100k_42_implicit.pkl"),
