@@ -2,9 +2,9 @@ import pickle as pkl
 import time
 import pandas as pd
 from tqdm import tqdm
-from lenskit import batch
+from lenskit_itemknn_modified import batch
 from nDCG import nDCG_LK
-from lenskit.algorithms import Recommender, item_knn
+from lenskit_itemknn_modified.algorithms import Recommender, item_knn
 
 
 """
@@ -74,12 +74,36 @@ def ndcg_evaluation(train_path, test_path, recommendation_path, dataset_name):
 
 if __name__ == "__main__":
     datasets = {
-        "ml100k": ("Data/Datasplits/ml-100k/trainset_ml100k.csv", "Data/Datasplits/ml-100k/testset_ml100k.csv", "Recommendations_customized_ItemKNN/saved_recommendations_ml100k_implicit.pkl"),
-        "ml1m": ("Data/Datasplits/ml-1m/trainset_ml-1m.csv", "Data/Datasplits/ml-1m/testset_ml-1m.csv", "Recommendations_customized_ItemKNN/saved_recommendations_ml1m_implicit.pkl"),
-        "anime": ("Data/Datasplits/anime/trainset_anime.csv", "Data/Datasplits/anime/testset_anime.csv", "Recommendations_customized_ItemKNN/saved_recommendations_anime_implicit.pkl"),
-        # Bookcrossing dataset cant be used
-        # "bookcrossing": ("Data/Datasplits/book-crossing/trainset_bookcrossing.csv", "Data/Datasplits/book-crossing/testset_bookcrossing.csv", "saved_recommendations_bookcrossing_implicit.pkl"),
-        "modcloth": ("Data/Datasplits/modcloth/trainset_modcloth.csv", "Data/Datasplits/modcloth/testset_modcloth.csv", "Recommendations_customized_ItemKNN/saved_recommendations_modcloth_implicit.pkl")
+
+
+        ### Same Data, Same NDCG, Same Similarity Matrix Implementation
+        "ml100k_84": ("Data/Datasplits/ml-100k/trainset_ml100k_84.csv", "Data/Datasplits/ml-100k/testset_ml100k_84.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_ml100k_84_implicit.pkl"),
+        "ml100k_42": ("Data/Datasplits/ml-100k/trainset_ml100k_42.csv", "Data/Datasplits/ml-100k/testset_ml100k_42.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_ml100k_42_implicit.pkl"),
+        "ml100k_21": ("Data/Datasplits/ml-100k/trainset_ml100k_21.csv", "Data/Datasplits/ml-100k/testset_ml100k_21.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_ml100k_21_implicit.pkl"),
+        "ml1m_84": ("Data/Datasplits/ml-1m/trainset_ml1m_84.csv", "Data/Datasplits/ml-1m/testset_ml1m_84.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_ml1m_84_implicit.pkl"),
+        "ml1m_42": ("Data/Datasplits/ml-1m/trainset_ml1m_42.csv", "Data/Datasplits/ml-1m/testset_ml1m_42.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_ml1m_42_implicit.pkl"),
+        "ml1m_21" : ("Data/Datasplits/ml-1m/trainset_ml1m_21.csv", "Data/Datasplits/ml-1m/testset_ml1m_21.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_ml1m_21_implicit.pkl"),
+        "modcloth_84": ("Data/Datasplits/modcloth/trainset_modcloth_84.csv", "Data/Datasplits/modcloth/testset_modcloth_84.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_modcloth_84_implicit.pkl"),
+        "modcloth_42": ("Data/Datasplits/modcloth/trainset_modcloth_42.csv", "Data/Datasplits/modcloth/testset_modcloth_42.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_modcloth_42_implicit.pkl"),
+        "modcloth_21": ("Data/Datasplits/modcloth/trainset_modcloth_21.csv", "Data/Datasplits/modcloth/testset_modcloth_21.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_modcloth_21_implicit.pkl"),
+        "anime_84": ("Data/Datasplits/anime/trainset_anime_84.csv", "Data/Datasplits/anime/testset_anime_84.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_anime_84_implicit.pkl"),
+        "anime_42": ("Data/Datasplits/anime/trainset_anime_42.csv", "Data/Datasplits/anime/testset_anime_42.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_anime_42_implicit.pkl"),
+        "anime_21": ("Data/Datasplits/anime/trainset_anime_21.csv", "Data/Datasplits/anime/testset_anime_21.csv", "Recommendations_customized_ItemKNN/customizedItemKNN_anime_21_implicit.pkl"),
+
+        #### Same Data, Same NDCG
+        # "ml100k_84": ("Data/Datasplits/ml-100k/trainset_ml100k_84.csv", "Data/Datasplits/ml-100k/testset_ml100k_84.csv", "Recommendations_SameData_SameNDCG/ml100k_84_implicit.pkl"),
+        # "ml100k_42": ("Data/Datasplits/ml-100k/trainset_ml100k_42.csv", "Data/Datasplits/ml-100k/testset_ml100k_42.csv", "Recommendations_SameData_SameNDCG/ml100k_42_implicit.pkl"),
+        # "ml100k_21": ("Data/Datasplits/ml-100k/trainset_ml100k_21.csv", "Data/Datasplits/ml-100k/testset_ml100k_21.csv", "Recommendations_SameData_SameNDCG/ml100k_21_implicit.pkl"),
+        # "ml1m_84": ("Data/Datasplits/ml-1m/trainset_ml1m_84.csv", "Data/Datasplits/ml-1m/testset_ml1m_84.csv", "Recommendations_SameData_SameNDCG/ml1m_84_implicit.pkl"),
+        # "ml1m_42": ("Data/Datasplits/ml-1m/trainset_ml1m_42.csv", "Data/Datasplits/ml-1m/testset_ml1m_42.csv", "Recommendations_SameData_SameNDCG/ml1m_42_implicit.pkl"),
+        # "ml1m_21" : ("Data/Datasplits/ml-1m/trainset_ml1m_21.csv", "Data/Datasplits/ml-1m/testset_ml1m_21.csv", "Recommendations_SameData_SameNDCG/ml1m_21_implicit.pkl"),
+        # "modcloth_84": ("Data/Datasplits/modcloth/trainset_modcloth_84.csv", "Data/Datasplits/modcloth/testset_modcloth_84.csv", "Recommendations_SameData_SameNDCG/modcloth_84_implicit.pkl"),
+        # "modcloth_42": ("Data/Datasplits/modcloth/trainset_modcloth_42.csv", "Data/Datasplits/modcloth/testset_modcloth_42.csv", "Recommendations_SameData_SameNDCG/modcloth_42_implicit.pkl"),
+        # "modcloth_21": ("Data/Datasplits/modcloth/trainset_modcloth_21.csv", "Data/Datasplits/modcloth/testset_modcloth_21.csv", "Recommendations_SameData_SameNDCG/modcloth_21_implicit.pkl"),
+        # "anime_84": ("Data/Datasplits/anime/trainset_anime_84.csv", "Data/Datasplits/anime/testset_anime_84.csv", "Recommendations_SameData_SameNDCG/anime_84_implicit.pkl"),
+        # "anime_42": ("Data/Datasplits/anime/trainset_anime_42.csv", "Data/Datasplits/anime/testset_anime_42.csv", "Recommendations_SameData_SameNDCG/anime_42_implicit.pkl"),
+        # "anime_21": ("Data/Datasplits/anime/trainset_anime_21.csv", "Data/Datasplits/anime/testset_anime_21.csv", "Recommendations_SameData_SameNDCG/anime_21_implicit.pkl"),
+
     }
 
     for name, paths in datasets.items():

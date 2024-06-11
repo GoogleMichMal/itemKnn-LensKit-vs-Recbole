@@ -122,10 +122,10 @@ def toDataframe(test, train):
         df1 (DataFrame): test dataset as pandas DataFrame
         df2 (DataFrame): train dataset as pandas DataFrame
     """
-    testFrame = {'user': test['user_id'], 'item': test['item_id'], 'rating': test['label']}
+    testFrame = {'user': test['user_id'], 'item': test['item_id'], 'rating': test['rating']}
     df1 = pd.DataFrame(data=testFrame)
 
-    trainFrame = {'user': train['user_id'], 'item': train['item_id'], 'rating': train['label']}
+    trainFrame = {'user': train['user_id'], 'item': train['item_id'], 'rating': train['rating']}
     df2 = pd.DataFrame(data=trainFrame)
     return df1, df2
 
