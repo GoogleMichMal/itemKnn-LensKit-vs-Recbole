@@ -20,7 +20,8 @@ git clone https://github.com/GoogleMichMal/itemKnn-LensKit-vs-Recbole.git
 ```
 
 2. **Download the Data**:
-Download the [Data.zip](https://github.com/GoogleMichMal/itemKnn-LensKit-vs-Recbole/releases/latest/download/Data.zip) file. It contains all four datasets used in our experiments.
+Download the [Data.zip](https://github.com/GoogleMichMal/itemKnn-LensKit-vs-Recbole/releases/latest/download/Data.zip) file or navigate to the `Code` directory and run the `download-data.py` script to automatically download and extract the datasets required for the experiments. It contains all datasets used in our experiments.
+
 
 3. **Unpack Data**:
 Unpack Data.zip in the parent directory of the repository, such that "Code" and "Data" are in the same directory.
@@ -30,3 +31,5 @@ In the parent directory, run:
 ```
 pip install -r requirements.txt
 ```
+
+
