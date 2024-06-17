@@ -2,11 +2,13 @@
 
 This repository aims to study, highlight, and understand the differences in the item-based kNN implementation between the libraries [LensKit](https://lkpy.readthedocs.io/en/stable/knn.html) and [Recbole](https://recbole.io/docs/user_guide/model/general/itemknn.html).
 
-## Results (So Far)
+### Data Sets
 
-### MovieLens 100K Dataset
+We utilized four datasets for our experiments: Anime, Modcloth, ML-100K, and ML-1M. These datasets were sourced from the Google Drive folder provided by RecBole. Each dataset was pre-processed into implicit feedback format suitable for recommendation systems.
 
-![MovieLens 100K Precision-Recall Curve](https://i.imgur.com/u8hJRPw.png)
+### Algorithms
+
+We focused on comparing the performance of the item-based kNN algorithm between LensKit and RecBole. Both implementations were configured with a k value of 20 and tasked to generate 10 recommendations per user in the test dataset.
 
 ## Setup
 
