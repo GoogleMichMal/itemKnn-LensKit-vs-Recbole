@@ -1,6 +1,10 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+## This files plots the nDCG@10 results for the data sets ml-100k, ml-1m, anime and modcloth.
+## The results are calculated after adjustment of the nDCG calculation and ItemKNN of LensKit.
+## Both algorithms get the same data as input for their training and testing.
+## It only plots the results for a random seed set to 42.
 
 ###### ML-100k ######
 # Data
