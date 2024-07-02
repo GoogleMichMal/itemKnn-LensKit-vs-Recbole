@@ -8,14 +8,11 @@ Here's what we did:
 The files listed in this directory do not contain our code. The code can be found in the "Code" directory. If you are interested in plotting our results, run the files contained in this directory.
 
 ### Files in this Directory:
-- `lk_partition_users.py`
-- `lk_replication.py`
-- `recbole_replication.py`
-- `replication_plot.py`
+- `plot_itemknn_modified.py`
+- `plot_sameData_sameNDCG.py`
 
-### How to Use:
-- **RecBole Reproduction**: Run `recbole_replication.py` to perform the reproduction using RecBole.
-- **LensKit Reproduction**: Run `lk_replication.py` and `lk_partition_users.py` to perform the reproduction using LensKit.
-- **Plot Results**: Use `replication_plot.py` to visualize the results of the reproduction.
+How to Use:
+- **Plot Results**: Use `plot_itemknn_modified.py` to visualize the results of the modified nDCG calculation.
+- **Plot Same Data, Same nDCG**: Use `plot_sameData_sameNDCG.py` to visualize the results of the same data and same nDCG calculation.
 
 For detailed instructions on running the code, please refer to the comments within each script.
