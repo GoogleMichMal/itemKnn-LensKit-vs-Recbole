@@ -40,6 +40,7 @@ def ndcg_evaluation(train_path, test_path, recommendation_path, dataset_name):
     train, test = load_dataset(train_path, test_path)
     print_dataset_stats(train, test)
 
+    # The modified ItemKNN algorithm of LensKit can be found in the folder "lenskit_itemknn_modified" -> "algorithms" -> "item_knn.py"
     itemknn = item_knn.ItemItem(20, feedback="implicit")
     fittable = Recommender.adapt(itemknn)
     fittable.fit(train)

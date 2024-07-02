@@ -451,7 +451,6 @@ class ItemItem(Predictor):
 
         # Create a new tensor to store the modified dense tensor
         modified_dense_tensor = dense_tensor.copy()
-        print(modified_dense_tensor)
 
         # Iterate over each column and get the 20 largest values from the rows
         for row in range(dense_tensor.shape[1]):
@@ -461,8 +460,6 @@ class ItemItem(Predictor):
 
             # Set all other values in the row to 0
             modified_dense_tensor[row, :] = torch.where(torch.isin(torch.arange(dense_tensor.shape[0]), top_indices), row_values_tensor, torch.tensor(0.0))
-
-        print(type(modified_dense_tensor))
 
         matrix = sps.csr_matrix(modified_dense_tensor.getA())
 
