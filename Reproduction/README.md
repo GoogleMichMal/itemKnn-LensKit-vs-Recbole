@@ -12,7 +12,7 @@ The files listed in this directory do not contain our code. The code can be foun
 - `plot_sameData_sameNDCG.py`
 
 How to Use:
+- **Plot Same Data, Same nDCG**: Use `plot_sameData_sameNDCG.py` to visualize the results of the same data and same nDCG calculation (before adjusting LensKit's similarity matrix calculation)
 - **Plot Results**: Use `plot_itemknn_modified.py` to visualize the results of the adjusted LensKit calculation.
-- **Plot Same Data, Same nDCG**: Use `plot_sameData_sameNDCG.py` to visualize the results of the same data and same nDCG calculation.
 
 For detailed instructions on running the code, please refer to the comments within each script.
