@@ -20,9 +20,9 @@ def itemknn_lenskit():
     recs = batch.recommend(fittable, users, 10, n_jobs=1)
 
     rla = topn.RecListAnalysis()
-    rla.add_metric(ndcg)
-    rla.add_metric(precision)
-    rla.add_metric(recall)
+    rla.add_metric(ndcg, name="ndcg", k=10)
+    rla.add_metric(precision, name="precision", k=10)
+    rla.add_metric(recall, name="recall", k=10)
     results = rla.compute(recs, test)
 
     return results.mean()
