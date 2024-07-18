@@ -3,9 +3,9 @@ import seaborn as sns
 
 ## This file plots the nDCG@10, Precision@10 and Recall@10 results for the Lenskit and RecBole algorithms.
 
-ndcg_lenskit = 0.2299
+ndcg_lenskit = 0.3067
 precision_lenskit = 0.2749
-recall_lenskit = 0.1868
+recall_lenskit = 0.3206
 
 ndcg_recbole = 0.3747
 precision_recbole = 0.3187
